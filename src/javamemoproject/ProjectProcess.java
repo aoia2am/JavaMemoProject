@@ -43,7 +43,7 @@ public class ProjectProcess {
 
 			case "1":
 				createProject();
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				break;
 
 			case "2":
@@ -65,7 +65,7 @@ public class ProjectProcess {
 			default:
 				System.out.println();
 				System.out.println("0〜4の番号を入力してください。");
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				break;
 			}
 		}
@@ -116,7 +116,7 @@ public class ProjectProcess {
 
 		if (activeProjects.isEmpty()) {
 			System.out.println("プロジェクトはありません。");
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return null;
 		}
 
@@ -143,7 +143,7 @@ public class ProjectProcess {
 			if (number < 1 || number > activeProjects.size()) {
 				System.out.println();
 				System.out.println("正しい番号を入力してください。");
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return null;
 			}
 
@@ -153,7 +153,7 @@ public class ProjectProcess {
 
 			System.out.println();
 			System.out.println("番号を入力してください。");
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return null;
 		}
 	}
@@ -170,7 +170,7 @@ public class ProjectProcess {
 		if (activeProjects.isEmpty()) {
 
 			System.out.println("変更できるプロジェクトはありません。");
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return;
 		}
 
@@ -202,7 +202,7 @@ public class ProjectProcess {
 
 				System.out.println();
 				System.out.println("正しい番号を入力してください。");
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -223,7 +223,7 @@ public class ProjectProcess {
 
 				System.out.println();
 				System.out.println("名前が入力されていません。");
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -237,13 +237,13 @@ public class ProjectProcess {
 			System.out.println("Before：" + oldName);
 			System.out.println("After ：" + newName);
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 
 		} catch (NumberFormatException e) {
 
 			System.out.println();
 			System.out.println("番号を入力してください。");
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 		}
 	}
 
@@ -259,7 +259,7 @@ public class ProjectProcess {
 		if (activeProjects.isEmpty()) {
 
 			System.out.println("削除できるプロジェクトはありません。");
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return;
 		}
 
@@ -291,7 +291,7 @@ public class ProjectProcess {
 
 				System.out.println();
 				System.out.println("正しい番号を入力してください。");
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -325,7 +325,7 @@ public class ProjectProcess {
 								+ project.getName()
 								+ "」を削除しました。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 
 			} else if (confirm.equals("n")) {
 
@@ -337,14 +337,14 @@ public class ProjectProcess {
 				System.out.println(
 						"y または n を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			}
 
 		} catch (NumberFormatException e) {
 
 			System.out.println();
 			System.out.println("番号を入力してください。");
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 		}
 	}
 
@@ -420,16 +420,6 @@ public class ProjectProcess {
 	}
 
 	// =========================
-	// Enter待ち
-	// =========================
-	private void waitForEnter() {
-
-		System.out.println();
-		System.out.print("Enterで前の画面に戻る > ");
-		scanner.nextLine();
-	}
-
-	// =========================
 	// アーカイブを見る
 	// =========================
 	public void showArchive() {
@@ -455,9 +445,7 @@ public class ProjectProcess {
 					"完了したプロジェクトはありません。");
 		}
 
-		System.out.println();
-		System.out.print("EnterでHOMEに戻る > ");
-		scanner.nextLine();
+		ConsoleUtil.waitForEnter(scanner, "EnterでHOMEに戻る > ");
 	}
 
 	// =========================
@@ -474,7 +462,7 @@ public class ProjectProcess {
 			System.out.println(
 					"並び替えできるプロジェクトがありません。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return;
 		}
 
@@ -514,7 +502,7 @@ public class ProjectProcess {
 				System.out.println(
 						"表示されている番号を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -559,7 +547,7 @@ public class ProjectProcess {
 				System.out.println(
 						"表示されている番号を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -582,7 +570,7 @@ public class ProjectProcess {
 			System.out.println(
 					"プロジェクトの順番を変更しました。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 
 		} catch (NumberFormatException e) {
 
@@ -590,7 +578,7 @@ public class ProjectProcess {
 			System.out.println(
 					"番号を入力してください。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 		}
 	}
 }

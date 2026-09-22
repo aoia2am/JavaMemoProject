@@ -40,7 +40,7 @@ public class MemoProcess {
 
 		if (projectMemos.isEmpty()) {
 			System.out.println("編集できるメモはありません。");
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return;
 		}
 
@@ -82,7 +82,7 @@ public class MemoProcess {
 				System.out.println(
 						"表示されている番号を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -110,7 +110,7 @@ public class MemoProcess {
 				System.out.println(
 						"メモが入力されていません。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -124,7 +124,7 @@ public class MemoProcess {
 			System.out.println("Before：" + oldText);
 			System.out.println("After ：" + newText);
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 
 		} catch (NumberFormatException e) {
 
@@ -132,7 +132,7 @@ public class MemoProcess {
 			System.out.println(
 					"番号を入力してください。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 		}
 	}
 
@@ -151,7 +151,7 @@ public class MemoProcess {
 			System.out.println(
 					"削除できるメモはありません。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return;
 		}
 
@@ -197,7 +197,7 @@ public class MemoProcess {
 				System.out.println(
 						"表示されている番号を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -247,7 +247,7 @@ public class MemoProcess {
 				System.out.println(
 						"y または n を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -264,7 +264,7 @@ public class MemoProcess {
 					"「" + targetMemo.getText()
 							+ "」を削除しました。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 
 		} catch (NumberFormatException e) {
 
@@ -272,7 +272,7 @@ public class MemoProcess {
 			System.out.println(
 					"番号を入力してください。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 		}
 	}
 
@@ -356,7 +356,7 @@ public class MemoProcess {
 				System.out.println();
 				System.out.println(
 						"0〜5の番号を入力してください。");
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				break;
 			}
 		}
@@ -442,7 +442,7 @@ public class MemoProcess {
 
 			System.out.println();
 			System.out.println("メモは追加されませんでした。");
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return;
 		}
 
@@ -507,7 +507,7 @@ public class MemoProcess {
 			System.out.println(
 					"細かくできるメモはありません。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return;
 		}
 
@@ -553,7 +553,7 @@ public class MemoProcess {
 				System.out.println(
 						"表示されている番号を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -607,7 +607,7 @@ public class MemoProcess {
 				System.out.println(
 						"メモは追加されませんでした。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -647,7 +647,7 @@ public class MemoProcess {
 						"・" + memo.getText());
 			}
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 
 		} catch (NumberFormatException e) {
 
@@ -655,7 +655,7 @@ public class MemoProcess {
 			System.out.println(
 					"番号を入力してください。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 		}
 	}
 
@@ -851,13 +851,6 @@ public class MemoProcess {
 		return maxOrder + 1;
 	}
 
-	private void waitForEnter() {
-
-		System.out.println();
-		System.out.print("Enterで前の画面に戻る > ");
-		scanner.nextLine();
-	}
-
 	// =========================
 	// 白紙に書き出す
 	// =========================
@@ -992,7 +985,7 @@ public class MemoProcess {
 				System.out.println();
 				System.out.println(
 						"0〜2の番号を入力してください。");
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				running = false;
 				break;
 			}
@@ -1013,7 +1006,7 @@ public class MemoProcess {
 
 			System.out.println("「未整理」のメモはありません。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return;
 		}
 
@@ -1140,7 +1133,7 @@ public class MemoProcess {
 					System.out.println(
 							"表示されている番号を入力してください。");
 
-					waitForEnter();
+					ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				}
 
 			} catch (NumberFormatException e) {
@@ -1149,7 +1142,7 @@ public class MemoProcess {
 				System.out.println(
 						"番号を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			}
 		}
 
@@ -1158,7 +1151,7 @@ public class MemoProcess {
 		System.out.println(
 				"未整理メモの確認が終わりました。");
 
-		waitForEnter();
+		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 	}
 
 	// =========================
@@ -1216,7 +1209,7 @@ public class MemoProcess {
 			System.out.println(
 					"完了できるメモはありません。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return false;
 		}
 
@@ -1244,7 +1237,7 @@ public class MemoProcess {
 			System.out.println(
 					"0 または 1 を入力してください。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return false;
 		}
 
@@ -1311,12 +1304,7 @@ public class MemoProcess {
 					"次にやること："
 							+ getCurrentTaskText());
 
-			System.out.println();
-
-			System.out.print(
-					"EnterでHOMEに戻る > ");
-
-			scanner.nextLine();
+			ConsoleUtil.waitForEnter(scanner, "EnterでHOMEに戻る > ");
 
 			return true;
 		}
@@ -1339,12 +1327,7 @@ public class MemoProcess {
 							+ nextTask.getText());
 		}
 
-		System.out.println();
-
-		System.out.print(
-				"Enterでプロジェクト画面に戻る > ");
-
-		scanner.nextLine();
+		ConsoleUtil.waitForEnter(scanner, "Enterでプロジェクト画面に戻る > ");
 
 		return false;
 	}
@@ -1557,7 +1540,7 @@ public class MemoProcess {
 			System.out.println(
 					"0〜2の番号を入力してください。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 
 			return false;
 		}
@@ -1670,7 +1653,7 @@ public class MemoProcess {
 				System.out.println();
 				System.out.println(
 						"0〜2の番号を入力してください。");
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				break;
 			}
 		}
@@ -1691,7 +1674,7 @@ public class MemoProcess {
 			System.out.println(
 					"並び替えできるメモはありません。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 			return;
 		}
 
@@ -1736,7 +1719,7 @@ public class MemoProcess {
 				System.out.println(
 						"表示されている番号を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -1789,7 +1772,7 @@ public class MemoProcess {
 				System.out.println(
 						"表示されている番号を入力してください。");
 
-				waitForEnter();
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 				return;
 			}
 
@@ -1813,7 +1796,7 @@ public class MemoProcess {
 			System.out.println(
 					"メモの順番を変更しました。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 
 		} catch (NumberFormatException e) {
 
@@ -1821,7 +1804,7 @@ public class MemoProcess {
 			System.out.println(
 					"番号を入力してください。");
 
-			waitForEnter();
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 		}
 	}
 }

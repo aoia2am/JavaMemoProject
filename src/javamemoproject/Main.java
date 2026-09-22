@@ -30,7 +30,7 @@ public class Main {
 			} else {
 				System.out.println();
 				System.out.println("0〜5の番号を入力してください。");
-				waitForEnter(scanner);
+				ConsoleUtil.waitForEnter(scanner, "EnterでHOMEに戻る > ");
 			}
 		}
 
@@ -53,11 +53,5 @@ public class Main {
 		System.out.println();
 		System.out.println("今やること：" + memoProcess.getCurrentTaskText());
 		System.out.println();
-	}
-
-	private static void waitForEnter(Scanner scanner) {
-		System.out.println();
-		System.out.print("EnterでHOMEに戻る > ");
-		scanner.nextLine();
 	}
 }
