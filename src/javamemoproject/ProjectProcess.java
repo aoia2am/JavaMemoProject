@@ -437,7 +437,7 @@ public class ProjectProcess {
 		ConsoleUtil.showLocation(
 				"HOME > アーカイブ");
 
-		int number = 1;
+		boolean hasCompleted = false;
 
 		for (Project project : projects) {
 
@@ -446,10 +446,11 @@ public class ProjectProcess {
 				System.out.println(
 						project.getName() + " [完了]");
 
+				hasCompleted = true;
 			}
 		}
 
-		if (number == 1) {
+		if (!hasCompleted) {
 			System.out.println(
 					"完了したプロジェクトはありません。");
 		}
