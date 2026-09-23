@@ -65,75 +65,54 @@ public class MemoProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		System.out.print("番号を入力 > ");
-		String input = scanner.nextLine().trim();
+		int number = ConsoleUtil.readNumber(
+				scanner,
+				"番号を入力 > ",
+				projectMemos.size());
 
-		if (input.equals("0")) {
+		if (number <= 0) {
 			return;
 		}
 
-		try {
+		Memo memo = projectMemos.get(number - 1);
 
-			int number = Integer.parseInt(input);
+		String oldText = memo.getText();
 
-			if (number < 1 || number > projectMemos.size()) {
+		ConsoleUtil.showDivider();
 
-				System.out.println();
-				System.out.println(
-						"表示されている番号を入力してください。");
+		System.out.println("現在のメモ：");
+		System.out.println(oldText);
 
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
+		System.out.println();
+		System.out.println(
+				"新しい内容を1文で入力してください。");
 
-			Memo memo = projectMemos.get(number - 1);
+		System.out.println();
+		System.out.print("> ");
 
-			String oldText = memo.getText();
+		String newText = scanner.nextLine().trim();
 
-			ConsoleUtil.showDivider();
-
-			System.out.println("現在のメモ：");
-			System.out.println(oldText);
+		if (newText.isEmpty()) {
 
 			System.out.println();
 			System.out.println(
-					"新しい内容を1文で入力してください。");
-
-			System.out.println();
-			System.out.print("> ");
-
-			String newText = scanner.nextLine().trim();
-
-			if (newText.isEmpty()) {
-
-				System.out.println();
-				System.out.println(
-						"メモが入力されていません。");
-
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
-
-			memo.setText(newText);
-			FileManager.saveMemos(memos);
-
-			System.out.println();
-			System.out.println("メモを変更しました。");
-
-			System.out.println();
-			System.out.println("Before：" + oldText);
-			System.out.println("After ：" + newText);
+					"メモが入力されていません。");
 
 			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-
-		} catch (NumberFormatException e) {
-
-			System.out.println();
-			System.out.println(
-					"番号を入力してください。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+			return;
 		}
+
+		memo.setText(newText);
+		FileManager.saveMemos(memos);
+
+		System.out.println();
+		System.out.println("メモを変更しました。");
+
+		System.out.println();
+		System.out.println("Before：" + oldText);
+		System.out.println("After ：" + newText);
+
+		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 	}
 
 	// =========================
@@ -178,102 +157,79 @@ public class MemoProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		System.out.print("番号を入力 > ");
+		int number = ConsoleUtil.readNumber(
+				scanner,
+				"番号を入力 > ",
+				projectMemos.size());
 
-		String input = scanner.nextLine().trim();
-
-		if (input.equals("0")) {
+		if (number <= 0) {
 			return;
 		}
 
-		try {
+		Memo targetMemo = projectMemos.get(number - 1);
 
-			int number = Integer.parseInt(input);
+		int projectId = targetMemo.getProjectId();
 
-			if (number < 1
-					|| number > projectMemos.size()) {
+		int parentMemoId = targetMemo.getParentMemoId();
 
-				System.out.println();
-				System.out.println(
-						"表示されている番号を入力してください。");
+		ArrayList<Memo> descendants = getDescendants(targetMemo);
 
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
+		System.out.println(
+				number + ".「"
+						+ targetMemo.getText()
+						+ "」を削除します。");
 
-			Memo targetMemo = projectMemos.get(number - 1);
-
-			int projectId = targetMemo.getProjectId();
-
-			int parentMemoId = targetMemo.getParentMemoId();
-
-			ArrayList<Memo> descendants = getDescendants(targetMemo);
-
-			System.out.println(
-					number + ".「"
-							+ targetMemo.getText()
-							+ "」を削除します。");
-
-			// 子メモがある場合
-			if (!descendants.isEmpty()) {
-
-				System.out.println();
-				System.out.println(
-						"このメモの下にあるメモも");
-				System.out.println(
-						"すべて削除されます。");
-
-				System.out.println();
-
-				for (Memo memo : descendants) {
-
-					System.out.println(
-							"・" + memo.getText());
-				}
-			}
-
-			System.out.println();
-			System.out.print("本当に削除しますか？ (y/n) > ");
-
-			String confirm = scanner.nextLine().trim().toLowerCase();
-
-			if (confirm.equals("n")) {
-				return;
-			}
-
-			if (!confirm.equals("y")) {
-
-				System.out.println();
-				System.out.println(
-						"y または n を入力してください。");
-
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
-
-			memos.removeAll(descendants);
-			memos.remove(targetMemo);
-
-			// 残った兄弟の番号を詰める
-			normalizeSiblingOrders(
-					projectId,
-					parentMemoId);
+		// 子メモがある場合
+		if (!descendants.isEmpty()) {
 
 			System.out.println();
 			System.out.println(
-					"「" + targetMemo.getText()
-							+ "」を削除しました。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-
-		} catch (NumberFormatException e) {
+					"このメモの下にあるメモも");
+			System.out.println(
+					"すべて削除されます。");
 
 			System.out.println();
-			System.out.println(
-					"番号を入力してください。");
 
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+			for (Memo memo : descendants) {
+
+				System.out.println(
+						"・" + memo.getText());
+			}
 		}
+
+		System.out.println();
+		System.out.print("本当に削除しますか？ (y/n) > ");
+
+		String confirm = scanner.nextLine().trim().toLowerCase();
+
+		if (confirm.equals("n")) {
+			return;
+		}
+
+		if (!confirm.equals("y")) {
+
+			System.out.println();
+			System.out.println(
+					"y または n を入力してください。");
+
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+			return;
+		}
+
+		memos.removeAll(descendants);
+		memos.remove(targetMemo);
+
+		// 残った兄弟の番号を詰める
+		normalizeSiblingOrders(
+				projectId,
+				parentMemoId);
+
+		System.out.println();
+		System.out.println(
+				"「" + targetMemo.getText()
+						+ "」を削除しました。");
+
+		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 	}
 
 	public void openProjectMemos(Project project) {
@@ -534,129 +490,106 @@ public class MemoProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		System.out.print("番号を入力 > ");
+		int number = ConsoleUtil.readNumber(
+				scanner,
+				"番号を入力 > ",
+				projectMemos.size());
 
-		String input = scanner.nextLine().trim();
-
-		if (input.equals("0")) {
+		if (number <= 0) {
 			return;
 		}
 
-		try {
+		Memo parentMemo = projectMemos.get(number - 1);
 
-			int number = Integer.parseInt(input);
+		ConsoleUtil.showDivider();
 
-			if (number < 1
-					|| number > projectMemos.size()) {
+		System.out.println(
+				"「" + parentMemo.getText()
+						+ "」を細かくします。");
 
-				System.out.println();
-				System.out.println(
-						"表示されている番号を入力してください。");
+		System.out.println();
 
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
+		System.out.println(
+				"必要なことを、思いつくまま書いてください。");
+
+		System.out.println();
+		System.out.println(
+				"「。」「！」「？」または改行で");
+		System.out.println(
+				"1件ずつのメモに分かれます。");
+
+		System.out.println();
+		System.out.println(
+				"入力を終えるときは、Enterを2回押してください。");
+
+		System.out.println();
+
+		StringBuilder inputText = new StringBuilder();
+
+		while (true) {
+
+			System.out.print("> ");
+
+			String line = scanner.nextLine();
+
+			if (line.isBlank()) {
+				break;
 			}
 
-			Memo parentMemo = projectMemos.get(number - 1);
-
-			ConsoleUtil.showDivider();
-
-			System.out.println(
-					"「" + parentMemo.getText()
-							+ "」を細かくします。");
-
-			System.out.println();
-
-			System.out.println(
-					"必要なことを、思いつくまま書いてください。");
-
-			System.out.println();
-			System.out.println(
-					"「。」「！」「？」または改行で");
-			System.out.println(
-					"1件ずつのメモに分かれます。");
-
-			System.out.println();
-			System.out.println(
-					"入力を終えるときは、Enterを2回押してください。");
-
-			System.out.println();
-
-			StringBuilder inputText = new StringBuilder();
-
-			while (true) {
-
-				System.out.print("> ");
-
-				String line = scanner.nextLine();
-
-				if (line.isBlank()) {
-					break;
-				}
-
-				inputText.append(line);
-				inputText.append("\n");
-			}
-
-			ArrayList<String> texts = splitMemo(
-					inputText.toString());
-
-			if (texts.isEmpty()) {
-
-				System.out.println();
-				System.out.println(
-						"メモは追加されませんでした。");
-
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
-
-			ArrayList<Memo> addedMemos = new ArrayList<>();
-
-			for (String text : texts) {
-
-				int memoId = getNextMemoId();
-
-				int order = getNextOrder(
-						project.getProjectId(),
-						parentMemo.getMemoId());
-
-				Memo childMemo = new Memo(
-						memoId,
-						text,
-						project.getProjectId(),
-						parentMemo.getMemoId(),
-						order);
-
-				memos.add(childMemo);
-				addedMemos.add(childMemo);
-			}
-
-			FileManager.saveMemos(memos);
-
-			System.out.println();
-			System.out.println(
-					addedMemos.size()
-							+ "件のメモを追加しました。");
-
-			System.out.println();
-
-			for (Memo memo : addedMemos) {
-
-				System.out.println(
-						"・" + memo.getText());
-			}
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-
-		} catch (NumberFormatException e) {
-
-			System.out.println();
-			System.out.println(
-					"番号を入力してください。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+			inputText.append(line);
+			inputText.append("\n");
 		}
+
+		ArrayList<String> texts = splitMemo(
+				inputText.toString());
+
+		if (texts.isEmpty()) {
+
+			System.out.println();
+			System.out.println(
+					"メモは追加されませんでした。");
+
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+			return;
+		}
+
+		ArrayList<Memo> addedMemos = new ArrayList<>();
+
+		for (String text : texts) {
+
+			int memoId = getNextMemoId();
+
+			int order = getNextOrder(
+					project.getProjectId(),
+					parentMemo.getMemoId());
+
+			Memo childMemo = new Memo(
+					memoId,
+					text,
+					project.getProjectId(),
+					parentMemo.getMemoId(),
+					order);
+
+			memos.add(childMemo);
+			addedMemos.add(childMemo);
+		}
+
+		FileManager.saveMemos(memos);
+
+		System.out.println();
+		System.out.println(
+				addedMemos.size()
+						+ "件のメモを追加しました。");
+
+		System.out.println();
+
+		for (Memo memo : addedMemos) {
+
+			System.out.println(
+					"・" + memo.getText());
+		}
+
+		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 	}
 
 	// =========================
@@ -1701,110 +1634,75 @@ public class MemoProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		System.out.print("番号を入力 > ");
-		String input = scanner.nextLine().trim();
+		int number = ConsoleUtil.readNumber(
+				scanner,
+				"番号を入力 > ",
+				projectMemos.size());
 
-		if (input.equals("0")) {
+		if (number <= 0) {
 			return;
 		}
 
-		try {
+		Memo targetMemo = projectMemos.get(number - 1);
 
-			int number = Integer.parseInt(input);
+		// 同じ親を持つメモだけ取得
+		ArrayList<Memo> siblings = getChildMemos(
+				targetMemo.getProjectId(),
+				targetMemo.getParentMemoId());
 
-			if (number < 1
-					|| number > projectMemos.size()) {
+		ConsoleUtil.showDivider();
 
-				System.out.println();
-				System.out.println(
-						"表示されている番号を入力してください。");
+		System.out.println(
+				"「" + targetMemo.getText()
+						+ "」の順番を変更します。");
 
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
+		System.out.println();
+		System.out.println(
+				"同じ階層の中で移動できます。");
 
-			Memo targetMemo = projectMemos.get(number - 1);
+		System.out.println();
 
-			// 同じ親を持つメモだけ取得
-			ArrayList<Memo> siblings = getChildMemos(
-					targetMemo.getProjectId(),
-					targetMemo.getParentMemoId());
-
-			ConsoleUtil.showDivider();
+		for (int i = 0; i < siblings.size(); i++) {
 
 			System.out.println(
-					"「" + targetMemo.getText()
-							+ "」の順番を変更します。");
-
-			System.out.println();
-			System.out.println(
-					"同じ階層の中で移動できます。");
-
-			System.out.println();
-
-			for (int i = 0; i < siblings.size(); i++) {
-
-				System.out.println(
-						(i + 1)
-								+ ". "
-								+ siblings.get(i).getText());
-			}
-
-			System.out.println();
-			System.out.println("0. 戻る");
-			System.out.println();
-
-			System.out.print(
-					"移動先の番号を入力 > ");
-
-			String newInput = scanner.nextLine().trim();
-
-			if (newInput.equals("0")) {
-				return;
-			}
-
-			int newPosition = Integer.parseInt(newInput);
-
-			if (newPosition < 1
-					|| newPosition > siblings.size()) {
-
-				System.out.println();
-				System.out.println(
-						"表示されている番号を入力してください。");
-
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
-
-			// 一度リストから外す
-			siblings.remove(targetMemo);
-
-			// 新しい位置へ入れる
-			siblings.add(
-					newPosition - 1,
-					targetMemo);
-
-			// orderを1から振り直す
-			for (int i = 0; i < siblings.size(); i++) {
-
-				siblings.get(i).setOrder(i + 1);
-			}
-
-			FileManager.saveMemos(memos);
-
-			System.out.println();
-			System.out.println(
-					"メモの順番を変更しました。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-
-		} catch (NumberFormatException e) {
-
-			System.out.println();
-			System.out.println(
-					"番号を入力してください。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+					(i + 1)
+							+ ". "
+							+ siblings.get(i).getText());
 		}
+
+		System.out.println();
+		System.out.println("0. 戻る");
+		System.out.println();
+
+		int newPosition = ConsoleUtil.readNumber(
+				scanner,
+				"移動先の番号を入力 > ",
+				siblings.size());
+
+		if (newPosition <= 0) {
+			return;
+		}
+
+		// 一度リストから外す
+		siblings.remove(targetMemo);
+
+		// 新しい位置へ入れる
+		siblings.add(
+				newPosition - 1,
+				targetMemo);
+
+		// orderを1から振り直す
+		for (int i = 0; i < siblings.size(); i++) {
+
+			siblings.get(i).setOrder(i + 1);
+		}
+
+		FileManager.saveMemos(memos);
+
+		System.out.println();
+		System.out.println(
+				"メモの順番を変更しました。");
+
+		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 	}
 }

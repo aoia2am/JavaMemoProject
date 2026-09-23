@@ -15,22 +15,37 @@ public class Main {
 			System.out.print("番号を入力 > ");
 			String input = scanner.nextLine().trim();
 
-			if (input.equals("1")) {
+			switch (input) {
+
+			case "1":
 				memoProcess.inputMemo();
-			} else if (input.equals("2")) {
+				break;
+
+			case "2":
 				memoProcess.organizeUnorganizedMemos();
-			} else if (input.equals("3")) {
+				break;
+
+			case "3":
 				memoProcess.openProjectMemos();
-			} else if (input.equals("4")) {
+				break;
+
+			case "4":
 				projectProcess.manageProjects(memoProcess);
-			} else if (input.equals("5")) {
+				break;
+
+			case "5":
 				projectProcess.showArchive();
-			} else if (input.equals("0")) {
+				break;
+
+			case "0":
 				running = false;
-			} else {
+				break;
+
+			default:
 				System.out.println();
 				System.out.println("0〜5の番号を入力してください。");
 				ConsoleUtil.waitForEnter(scanner, "EnterでHOMEに戻る > ");
+				break;
 			}
 		}
 

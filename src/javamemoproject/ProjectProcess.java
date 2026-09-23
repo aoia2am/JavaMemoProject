@@ -129,33 +129,16 @@ public class ProjectProcess {
 		System.out.println("0. HOMEへ戻る");
 		System.out.println();
 
-		System.out.print("番号を入力 > ");
-		String input = scanner.nextLine().trim();
+		int number = ConsoleUtil.readNumber(
+				scanner,
+				"番号を入力 > ",
+				activeProjects.size());
 
-		if (input.equals("0")) {
+		if (number <= 0) {
 			return null;
 		}
 
-		try {
-
-			int number = Integer.parseInt(input);
-
-			if (number < 1 || number > activeProjects.size()) {
-				System.out.println();
-				System.out.println("正しい番号を入力してください。");
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return null;
-			}
-
-			return activeProjects.get(number - 1);
-
-		} catch (NumberFormatException e) {
-
-			System.out.println();
-			System.out.println("番号を入力してください。");
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-			return null;
-		}
+		return activeProjects.get(number - 1);
 	}
 
 	// =========================
@@ -187,64 +170,47 @@ public class ProjectProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		System.out.print("番号を入力 > ");
-		String input = scanner.nextLine().trim();
+		int number = ConsoleUtil.readNumber(
+				scanner,
+				"番号を入力 > ",
+				activeProjects.size());
 
-		if (input.equals("0")) {
+		if (number <= 0) {
 			return;
 		}
 
-		try {
+		Project project = activeProjects.get(number - 1);
 
-			int number = Integer.parseInt(input);
+		String oldName = project.getName();
 
-			if (number < 1 || number > activeProjects.size()) {
+		ConsoleUtil.showDivider();
 
-				System.out.println();
-				System.out.println("正しい番号を入力してください。");
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
+		System.out.println("現在のプロジェクト名：");
+		System.out.println(oldName);
+		System.out.println();
 
-			Project project = activeProjects.get(number - 1);
+		System.out.print("新しい名前 > ");
+		String newName = scanner.nextLine().trim();
 
-			String oldName = project.getName();
-
-			ConsoleUtil.showDivider();
-
-			System.out.println("現在のプロジェクト名：");
-			System.out.println(oldName);
-			System.out.println();
-
-			System.out.print("新しい名前 > ");
-			String newName = scanner.nextLine().trim();
-
-			if (newName.isEmpty()) {
-
-				System.out.println();
-				System.out.println("名前が入力されていません。");
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
-
-			project.setName(newName);
-			FileManager.saveProjects(projects);
+		if (newName.isEmpty()) {
 
 			System.out.println();
-			System.out.println("プロジェクト名を変更しました。");
-			System.out.println();
-
-			System.out.println("Before：" + oldName);
-			System.out.println("After ：" + newName);
-
+			System.out.println("名前が入力されていません。");
 			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-
-		} catch (NumberFormatException e) {
-
-			System.out.println();
-			System.out.println("番号を入力してください。");
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+			return;
 		}
+
+		project.setName(newName);
+		FileManager.saveProjects(projects);
+
+		System.out.println();
+		System.out.println("プロジェクト名を変更しました。");
+		System.out.println();
+
+		System.out.println("Before：" + oldName);
+		System.out.println("After ：" + newName);
+
+		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 	}
 
 	// =========================
@@ -276,74 +242,57 @@ public class ProjectProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		System.out.print("番号を入力 > ");
-		String input = scanner.nextLine().trim();
+		int number = ConsoleUtil.readNumber(
+				scanner,
+				"番号を入力 > ",
+				activeProjects.size());
 
-		if (input.equals("0")) {
+		if (number <= 0) {
 			return;
 		}
 
-		try {
+		Project project = activeProjects.get(number - 1);
 
-			int number = Integer.parseInt(input);
+		ConsoleUtil.showDivider();
 
-			if (number < 1 || number > activeProjects.size()) {
+		System.out.println(
+				number + ".「" + project.getName() + "」を削除します。");
 
-				System.out.println();
-				System.out.println("正しい番号を入力してください。");
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
+		System.out.println();
+		System.out.println("このプロジェクト内のメモも");
+		System.out.println("すべて削除されます。");
 
-			Project project = activeProjects.get(number - 1);
+		System.out.println();
+		System.out.print("本当に削除しますか？ (y/n) > ");
 
-			ConsoleUtil.showDivider();
+		String confirm = scanner.nextLine().trim().toLowerCase();
 
+		if (confirm.equals("y")) {
+
+			memoProcess.deleteMemosByProjectId(
+					project.getProjectId());
+
+			projects.remove(project);
+			FileManager.saveProjects(projects);
+
+			System.out.println();
 			System.out.println(
-					number + ".「" + project.getName() + "」を削除します。");
+					"プロジェクト「"
+							+ project.getName()
+							+ "」を削除しました。");
+
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+
+		} else if (confirm.equals("n")) {
+
+			return;
+
+		} else {
 
 			System.out.println();
-			System.out.println("このプロジェクト内のメモも");
-			System.out.println("すべて削除されます。");
+			System.out.println(
+					"y または n を入力してください。");
 
-			System.out.println();
-			System.out.print("本当に削除しますか？ (y/n) > ");
-
-			String confirm = scanner.nextLine().trim().toLowerCase();
-
-			if (confirm.equals("y")) {
-
-				memoProcess.deleteMemosByProjectId(
-						project.getProjectId());
-
-				projects.remove(project);
-				FileManager.saveProjects(projects);
-
-				System.out.println();
-				System.out.println(
-						"プロジェクト「"
-								+ project.getName()
-								+ "」を削除しました。");
-
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-
-			} else if (confirm.equals("n")) {
-
-				return;
-
-			} else {
-
-				System.out.println();
-				System.out.println(
-						"y または n を入力してください。");
-
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-			}
-
-		} catch (NumberFormatException e) {
-
-			System.out.println();
-			System.out.println("番号を入力してください。");
 			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 		}
 	}
@@ -483,102 +432,66 @@ public class ProjectProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		System.out.print("番号を入力 > ");
+		int number = ConsoleUtil.readNumber(
+				scanner,
+				"番号を入力 > ",
+				activeProjects.size());
 
-		String input = scanner.nextLine().trim();
-
-		if (input.equals("0")) {
+		if (number <= 0) {
 			return;
 		}
 
-		try {
+		Project targetProject = activeProjects.get(number - 1);
 
-			int number = Integer.parseInt(input);
+		ConsoleUtil.showDivider();
 
-			if (number < 1
-					|| number > activeProjects.size()) {
+		System.out.println(
+				"「"
+						+ targetProject.getName()
+						+ "」を何番目にしますか？");
 
-				System.out.println();
-				System.out.println(
-						"表示されている番号を入力してください。");
+		System.out.println();
 
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
-
-			Project targetProject = activeProjects.get(number - 1);
-
-			ConsoleUtil.showDivider();
+		for (int i = 0; i < activeProjects.size(); i++) {
 
 			System.out.println(
-					"「"
-							+ targetProject.getName()
-							+ "」を何番目にしますか？");
-
-			System.out.println();
-
-			for (int i = 0; i < activeProjects.size(); i++) {
-
-				System.out.println(
-						(i + 1)
-								+ ". "
-								+ activeProjects.get(i).getName());
-			}
-
-			System.out.println();
-			System.out.println("0. 戻る");
-			System.out.println();
-
-			System.out.print(
-					"移動先の番号を入力 > ");
-
-			String newInput = scanner.nextLine().trim();
-
-			if (newInput.equals("0")) {
-				return;
-			}
-
-			int newPosition = Integer.parseInt(newInput);
-
-			if (newPosition < 1
-					|| newPosition > activeProjects.size()) {
-
-				System.out.println();
-				System.out.println(
-						"表示されている番号を入力してください。");
-
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				return;
-			}
-
-			activeProjects.remove(targetProject);
-
-			activeProjects.add(
-					newPosition - 1,
-					targetProject);
-
-			for (int i = 0; i < activeProjects.size(); i++) {
-
-				activeProjects
-						.get(i)
-						.setOrder(i + 1);
-			}
-
-			FileManager.saveProjects(projects);
-
-			System.out.println();
-			System.out.println(
-					"プロジェクトの順番を変更しました。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-
-		} catch (NumberFormatException e) {
-
-			System.out.println();
-			System.out.println(
-					"番号を入力してください。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+					(i + 1)
+							+ ". "
+							+ activeProjects.get(i).getName());
 		}
+
+		System.out.println();
+		System.out.println("0. 戻る");
+		System.out.println();
+
+		int newPosition = ConsoleUtil.readNumber(
+				scanner,
+				"移動先の番号を入力 > ",
+				activeProjects.size());
+
+		if (newPosition <= 0) {
+			return;
+		}
+
+		activeProjects.remove(targetProject);
+
+		activeProjects.add(
+				newPosition - 1,
+				targetProject);
+
+		for (int i = 0; i < activeProjects.size(); i++) {
+
+			activeProjects
+					.get(i)
+					.setOrder(i + 1);
+		}
+
+		FileManager.saveProjects(projects);
+
+		System.out.println();
+		System.out.println(
+				"プロジェクトの順番を変更しました。");
+
+		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 	}
 }
