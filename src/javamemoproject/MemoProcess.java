@@ -20,13 +20,18 @@ public class MemoProcess {
 	// プロジェクトを選んでメモを見る
 	public void openProjectMemos() {
 
-		Project project = projectProcess.selectProject();
+		// メモ一覧を閉じたらプロジェクト一覧へ戻る
+		while (true) {
 
-		if (project == null) {
-			return;
+			Project project = projectProcess.selectProject();
+
+			// プロジェクト一覧で0が入力されたらHOMEへ
+			if (project == null) {
+				return;
+			}
+
+			openProjectMemos(project);
 		}
-
-		openProjectMemos(project);
 	}
 
 	// =========================
@@ -65,12 +70,22 @@ public class MemoProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		int number = ConsoleUtil.readNumber(
-				scanner,
-				"番号を入力 > ",
-				projectMemos.size());
+		int number;
 
-		if (number <= 0) {
+		// 不正入力ならこの場で再入力
+		while (true) {
+
+			number = ConsoleUtil.readNumber(
+					scanner,
+					"番号を入力 > ",
+					projectMemos.size());
+
+			if (number != -1) {
+				break;
+			}
+		}
+
+		if (number == 0) {
 			return;
 		}
 
@@ -157,12 +172,22 @@ public class MemoProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		int number = ConsoleUtil.readNumber(
-				scanner,
-				"番号を入力 > ",
-				projectMemos.size());
+		int number;
 
-		if (number <= 0) {
+		// 不正入力ならこの場で再入力
+		while (true) {
+
+			number = ConsoleUtil.readNumber(
+					scanner,
+					"番号を入力 > ",
+					projectMemos.size());
+
+			if (number != -1) {
+				break;
+			}
+		}
+
+		if (number == 0) {
 			return;
 		}
 
@@ -435,16 +460,31 @@ public class MemoProcess {
 			System.out.println("・" + memo.getText());
 		}
 
-		System.out.println();
-		System.out.println("1. 続けて書き込む");
-		System.out.println("0. プロジェクトへ戻る");
-		System.out.println();
+		// 不正入力ならこのメニューに留まって再入力
+		while (true) {
 
-		System.out.print("番号を入力 > ");
-		String input = scanner.nextLine().trim();
+			System.out.println();
+			System.out.println("1. 続けて書き込む");
+			System.out.println("0. プロジェクトへ戻る");
+			System.out.println();
 
-		if (input.equals("1")) {
-			createMemo(project);
+			System.out.print("番号を入力 > ");
+			String input = scanner.nextLine().trim();
+
+			if (input.equals("1")) {
+				createMemo(project);
+				return;
+			}
+
+			if (input.equals("0")) {
+				return;
+			}
+
+			System.out.println();
+			System.out.println(
+					"0 または 1 を入力してください。");
+
+			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 		}
 	}
 
@@ -490,12 +530,22 @@ public class MemoProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		int number = ConsoleUtil.readNumber(
-				scanner,
-				"番号を入力 > ",
-				projectMemos.size());
+		int number;
 
-		if (number <= 0) {
+		// 不正入力ならこの場で再入力
+		while (true) {
+
+			number = ConsoleUtil.readNumber(
+					scanner,
+					"番号を入力 > ",
+					projectMemos.size());
+
+			if (number != -1) {
+				break;
+			}
+		}
+
+		if (number == 0) {
 			return;
 		}
 
@@ -843,16 +893,36 @@ public class MemoProcess {
 				System.out.println();
 				System.out.println("メモは保存されませんでした。");
 
-				System.out.println();
-				System.out.println("1. もう一度書く");
-				System.out.println("0. HOMEへ戻る");
-				System.out.println();
+				// 不正入力ならこのメニューに留まって再入力
+				boolean inMenu = true;
 
-				System.out.print("番号を入力 > ");
-				String input = scanner.nextLine().trim();
+				while (inMenu) {
 
-				if (input.equals("0")) {
-					running = false;
+					System.out.println();
+					System.out.println("1. もう一度書く");
+					System.out.println("0. HOMEへ戻る");
+					System.out.println();
+
+					System.out.print("番号を入力 > ");
+					String input = scanner.nextLine().trim();
+
+					if (input.equals("1")) {
+
+						inMenu = false;
+
+					} else if (input.equals("0")) {
+
+						running = false;
+						inMenu = false;
+
+					} else {
+
+						System.out.println();
+						System.out.println(
+								"0 または 1 を入力してください。");
+
+						ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+					}
 				}
 
 				continue;
@@ -884,43 +954,51 @@ public class MemoProcess {
 					texts.size()
 							+ "件のメモを「未整理」に保存しました。");
 
-			System.out.println();
-			System.out.println("1. さらに入力する");
+			// 不正入力ならこのメニューに留まって再入力
+			boolean inMenu = true;
 
-			System.out.println();
-			System.out.println(
-					"2. 「未整理」メモを整理する");
-			System.out.println(
-					"0. HOMEへ戻る");
+			while (inMenu) {
 
-			System.out.println();
+				System.out.println();
+				System.out.println("1. さらに入力する");
 
-			System.out.print("番号を入力 > ");
-			String input = scanner.nextLine().trim();
-
-			switch (input) {
-
-			case "1":
-				// whileの先頭へ戻る
-				break;
-
-			case "2":
-				ConsoleUtil.showDivider();
-				organizeUnorganizedMemos();
-				running = false;
-				break;
-
-			case "0":
-				running = false;
-				break;
-
-			default:
 				System.out.println();
 				System.out.println(
-						"0〜2の番号を入力してください。");
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				running = false;
-				break;
+						"2. 「未整理」メモを整理する");
+				System.out.println(
+						"0. HOMEへ戻る");
+
+				System.out.println();
+
+				System.out.print("番号を入力 > ");
+				String input = scanner.nextLine().trim();
+
+				switch (input) {
+
+				case "1":
+					// whileの先頭へ戻る
+					inMenu = false;
+					break;
+
+				case "2":
+					ConsoleUtil.showDivider();
+					organizeUnorganizedMemos();
+					running = false;
+					inMenu = false;
+					break;
+
+				case "0":
+					running = false;
+					inMenu = false;
+					break;
+
+				default:
+					System.out.println();
+					System.out.println(
+							"0〜2の番号を入力してください。");
+					ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+					break;
+				}
 			}
 		}
 
@@ -1432,50 +1510,54 @@ public class MemoProcess {
 				"「" + project.getName()
 						+ "」に保存しました。");
 
-		ConsoleUtil.showDivider();
+		// 不正入力ならこのメニューに留まって再入力
+		while (true) {
 
-		System.out.println("次にどうしますか？");
-		System.out.println();
+			ConsoleUtil.showDivider();
 
-		System.out.println(
-				"1. 次の未整理メモへ");
-
-		System.out.println();
-
-		System.out.println(
-				"2. 「" + project.getName()
-						+ "」を開く");
-
-		System.out.println(
-				"0. HOMEへ戻る");
-
-		System.out.println();
-
-		System.out.print("番号を入力 > ");
-		String input = scanner.nextLine().trim();
-
-		switch (input) {
-
-		case "1":
-			return true;
-
-		case "2":
-			openProjectMemos(project);
-
-			// プロジェクトを見終わったらHOMEへ
-			return false;
-
-		case "0":
-			return false;
-
-		default:
+			System.out.println("次にどうしますか？");
 			System.out.println();
+
 			System.out.println(
-					"0〜2の番号を入力してください。");
+					"1. 次の未整理メモへ");
 
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+			System.out.println();
 
-			return false;
+			System.out.println(
+					"2. 「" + project.getName()
+							+ "」を開く");
+
+			System.out.println(
+					"0. HOMEへ戻る");
+
+			System.out.println();
+
+			System.out.print("番号を入力 > ");
+			String input = scanner.nextLine().trim();
+
+			switch (input) {
+
+			case "1":
+				return true;
+
+			case "2":
+				openProjectMemos(project);
+
+				// プロジェクトを見終わったらHOMEへ
+				return false;
+
+			case "0":
+				return false;
+
+			default:
+				System.out.println();
+				System.out.println(
+						"0〜2の番号を入力してください。");
+
+				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+
+				break;
+			}
 		}
 	}
 
@@ -1634,12 +1716,22 @@ public class MemoProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		int number = ConsoleUtil.readNumber(
-				scanner,
-				"番号を入力 > ",
-				projectMemos.size());
+		int number;
 
-		if (number <= 0) {
+		// 不正入力ならこの場で再入力
+		while (true) {
+
+			number = ConsoleUtil.readNumber(
+					scanner,
+					"番号を入力 > ",
+					projectMemos.size());
+
+			if (number != -1) {
+				break;
+			}
+		}
+
+		if (number == 0) {
 			return;
 		}
 
@@ -1674,12 +1766,22 @@ public class MemoProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		int newPosition = ConsoleUtil.readNumber(
-				scanner,
-				"移動先の番号を入力 > ",
-				siblings.size());
+		int newPosition;
 
-		if (newPosition <= 0) {
+		// 不正入力でも対象は選び直さず、移動先だけ再入力
+		while (true) {
+
+			newPosition = ConsoleUtil.readNumber(
+					scanner,
+					"移動先の番号を入力 > ",
+					siblings.size());
+
+			if (newPosition != -1) {
+				break;
+			}
+		}
+
+		if (newPosition == 0) {
 			return;
 		}
 

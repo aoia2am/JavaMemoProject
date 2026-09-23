@@ -129,12 +129,23 @@ public class ProjectProcess {
 		System.out.println("0. HOMEへ戻る");
 		System.out.println();
 
-		int number = ConsoleUtil.readNumber(
-				scanner,
-				"番号を入力 > ",
-				activeProjects.size());
+		int number;
 
-		if (number <= 0) {
+		// 不正入力ならこの場で再入力
+		while (true) {
+
+			number = ConsoleUtil.readNumber(
+					scanner,
+					"番号を入力 > ",
+					activeProjects.size());
+
+			if (number != -1) {
+				break;
+			}
+		}
+
+		// 0はHOMEへ戻る
+		if (number == 0) {
 			return null;
 		}
 
@@ -170,12 +181,22 @@ public class ProjectProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		int number = ConsoleUtil.readNumber(
-				scanner,
-				"番号を入力 > ",
-				activeProjects.size());
+		int number;
 
-		if (number <= 0) {
+		// 不正入力ならこの場で再入力
+		while (true) {
+
+			number = ConsoleUtil.readNumber(
+					scanner,
+					"番号を入力 > ",
+					activeProjects.size());
+
+			if (number != -1) {
+				break;
+			}
+		}
+
+		if (number == 0) {
 			return;
 		}
 
@@ -242,12 +263,22 @@ public class ProjectProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		int number = ConsoleUtil.readNumber(
-				scanner,
-				"番号を入力 > ",
-				activeProjects.size());
+		int number;
 
-		if (number <= 0) {
+		// 不正入力ならこの場で再入力
+		while (true) {
+
+			number = ConsoleUtil.readNumber(
+					scanner,
+					"番号を入力 > ",
+					activeProjects.size());
+
+			if (number != -1) {
+				break;
+			}
+		}
+
+		if (number == 0) {
 			return;
 		}
 
@@ -432,12 +463,22 @@ public class ProjectProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		int number = ConsoleUtil.readNumber(
-				scanner,
-				"番号を入力 > ",
-				activeProjects.size());
+		int number;
 
-		if (number <= 0) {
+		// 不正入力ならこの場で再入力
+		while (true) {
+
+			number = ConsoleUtil.readNumber(
+					scanner,
+					"番号を入力 > ",
+					activeProjects.size());
+
+			if (number != -1) {
+				break;
+			}
+		}
+
+		if (number == 0) {
 			return;
 		}
 
@@ -464,12 +505,22 @@ public class ProjectProcess {
 		System.out.println("0. 戻る");
 		System.out.println();
 
-		int newPosition = ConsoleUtil.readNumber(
-				scanner,
-				"移動先の番号を入力 > ",
-				activeProjects.size());
+		int newPosition;
 
-		if (newPosition <= 0) {
+		// 不正入力でも対象は選び直さず、移動先だけ再入力
+		while (true) {
+
+			newPosition = ConsoleUtil.readNumber(
+					scanner,
+					"移動先の番号を入力 > ",
+					activeProjects.size());
+
+			if (newPosition != -1) {
+				break;
+			}
+		}
+
+		if (newPosition == 0) {
 			return;
 		}
 
