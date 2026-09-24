@@ -22,11 +22,11 @@ public class Main {
 				break;
 
 			case "2":
-				memoProcess.organizeUnorganizedMemos();
+				memoProcess.assignUnorganizedMemos();
 				break;
 
 			case "3":
-				memoProcess.openProjectMemos();
+				memoProcess.openProjectMemoMenu();
 				break;
 
 			case "4":
