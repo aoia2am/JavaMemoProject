@@ -401,23 +401,7 @@ public class MemoProcess {
 
 		System.out.println();
 
-		StringBuilder inputText = new StringBuilder();
-
-		while (true) {
-
-			System.out.print("> ");
-			String line = scanner.nextLine();
-
-			// 空行が来たら入力終了
-			if (line.isBlank()) {
-				break;
-			}
-
-			inputText.append(line);
-			inputText.append("\n");
-		}
-
-		ArrayList<String> texts = splitMemo(inputText.toString());
+		ArrayList<String> texts = readMemoTexts();
 
 		if (texts.isEmpty()) {
 
@@ -427,27 +411,10 @@ public class MemoProcess {
 			return;
 		}
 
-		ArrayList<Memo> addedMemos = new ArrayList<>();
-
-		for (String text : texts) {
-
-			int memoId = getNextMemoId();
-			int order = getNextOrder(
-					project.getProjectId(),
-					0);
-
-			Memo memo = new Memo(
-					memoId,
-					text,
-					project.getProjectId(),
-					0,
-					order);
-
-			memos.add(memo);
-			addedMemos.add(memo);
-		}
-
-		FileManager.saveMemos(memos);
+		ArrayList<Memo> addedMemos = addMemos(
+				texts,
+				project.getProjectId(),
+				0);
 
 		System.out.println();
 		System.out.println(
@@ -574,24 +541,7 @@ public class MemoProcess {
 
 		System.out.println();
 
-		StringBuilder inputText = new StringBuilder();
-
-		while (true) {
-
-			System.out.print("> ");
-
-			String line = scanner.nextLine();
-
-			if (line.isBlank()) {
-				break;
-			}
-
-			inputText.append(line);
-			inputText.append("\n");
-		}
-
-		ArrayList<String> texts = splitMemo(
-				inputText.toString());
+		ArrayList<String> texts = readMemoTexts();
 
 		if (texts.isEmpty()) {
 
@@ -603,28 +553,10 @@ public class MemoProcess {
 			return;
 		}
 
-		ArrayList<Memo> addedMemos = new ArrayList<>();
-
-		for (String text : texts) {
-
-			int memoId = getNextMemoId();
-
-			int order = getNextOrder(
-					project.getProjectId(),
-					parentMemo.getMemoId());
-
-			Memo childMemo = new Memo(
-					memoId,
-					text,
-					project.getProjectId(),
-					parentMemo.getMemoId(),
-					order);
-
-			memos.add(childMemo);
-			addedMemos.add(childMemo);
-		}
-
-		FileManager.saveMemos(memos);
+		ArrayList<Memo> addedMemos = addMemos(
+				texts,
+				project.getProjectId(),
+				parentMemo.getMemoId());
 
 		System.out.println();
 		System.out.println(
@@ -835,6 +767,65 @@ public class MemoProcess {
 	}
 
 	// =========================
+	// 複数行の入力を受け取り
+	// メモ単位に分割する
+	// =========================
+	private ArrayList<String> readMemoTexts() {
+
+		StringBuilder inputText = new StringBuilder();
+
+		while (true) {
+
+			System.out.print("> ");
+			String line = scanner.nextLine();
+
+			// 空行が来たら入力終了
+			if (line.isBlank()) {
+				break;
+			}
+
+			inputText.append(line);
+			inputText.append("\n");
+		}
+
+		return splitMemo(inputText.toString());
+	}
+
+	// =========================
+	// メモを作って保存する
+	// =========================
+	private ArrayList<Memo> addMemos(
+			ArrayList<String> texts,
+			int projectId,
+			int parentMemoId) {
+
+		ArrayList<Memo> addedMemos = new ArrayList<>();
+
+		for (String text : texts) {
+
+			int memoId = getNextMemoId();
+
+			int order = getNextOrder(
+					projectId,
+					parentMemoId);
+
+			Memo memo = new Memo(
+					memoId,
+					text,
+					projectId,
+					parentMemoId,
+					order);
+
+			memos.add(memo);
+			addedMemos.add(memo);
+		}
+
+		FileManager.saveMemos(memos);
+
+		return addedMemos;
+	}
+
+	// =========================
 	// 白紙に書き出す
 	// =========================
 	public void inputMemo() {
@@ -870,22 +861,7 @@ public class MemoProcess {
 			System.out.println();
 			System.out.println();
 
-			StringBuilder inputText = new StringBuilder();
-
-			while (true) {
-
-				System.out.print("> ");
-				String line = scanner.nextLine();
-
-				if (line.isBlank()) {
-					break;
-				}
-
-				inputText.append(line);
-				inputText.append("\n");
-			}
-
-			ArrayList<String> texts = splitMemo(inputText.toString());
+			ArrayList<String> texts = readMemoTexts();
 
 			// 何も入力されなかった場合
 			if (texts.isEmpty()) {
@@ -929,25 +905,8 @@ public class MemoProcess {
 			}
 
 			// 未整理メモとして保存
-			for (String text : texts) {
-
-				int memoId = getNextMemoId();
-
-				int order = getNextOrder(
-						0,
-						0);
-
-				Memo memo = new Memo(
-						memoId,
-						text,
-						0, // projectId = 0 → 未整理
-						0, // parentMemoId = 0
-						order);
-
-				memos.add(memo);
-			}
-
-			FileManager.saveMemos(memos);
+			// projectId = 0 → 未整理 / parentMemoId = 0
+			addMemos(texts, 0, 0);
 
 			System.out.println();
 			System.out.println(
