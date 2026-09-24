@@ -376,17 +376,7 @@ public class MemoProcess {
 		System.out.println(
 				"追加したいことを、思いつくまま書いてください。");
 
-		System.out.println();
-		System.out.println(
-				"「。」「！」「？」または改行で");
-		System.out.println(
-				"1件ずつのメモに分かれます。");
-
-		System.out.println();
-		System.out.println(
-				"入力を終えるときは、Enterを2回押してください。");
-
-		System.out.println();
+		showMemoInputGuide();
 
 		ArrayList<String> texts = readMemoTexts();
 
@@ -403,16 +393,7 @@ public class MemoProcess {
 				project.getProjectId(),
 				0);
 
-		System.out.println();
-		System.out.println(
-				addedMemos.size()
-						+ "件のメモを追加しました。");
-
-		System.out.println();
-
-		for (Memo memo : addedMemos) {
-			System.out.println("・" + memo.getText());
-		}
+		showAddedMemos(addedMemos);
 
 		// 不正入力ならこのメニューに留まって再入力
 		while (true) {
@@ -468,17 +449,7 @@ public class MemoProcess {
 		System.out.println(
 				"必要なことを、思いつくまま書いてください。");
 
-		System.out.println();
-		System.out.println(
-				"「。」「！」「？」または改行で");
-		System.out.println(
-				"1件ずつのメモに分かれます。");
-
-		System.out.println();
-		System.out.println(
-				"入力を終えるときは、Enterを2回押してください。");
-
-		System.out.println();
+		showMemoInputGuide();
 
 		ArrayList<String> texts = readMemoTexts();
 
@@ -497,6 +468,35 @@ public class MemoProcess {
 				project.getProjectId(),
 				parentMemo.getMemoId());
 
+		showAddedMemos(addedMemos);
+
+		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+	}
+
+	// =========================
+	// メモの書き方の案内
+	// =========================
+	private void showMemoInputGuide() {
+
+		System.out.println();
+		System.out.println(
+				"「。」「！」「？」または改行で");
+		System.out.println(
+				"1件ずつのメモに分かれます。");
+
+		System.out.println();
+		System.out.println(
+				"入力を終えるときは、Enterを2回押してください。");
+
+		System.out.println();
+	}
+
+	// =========================
+	// 追加したメモを表示する
+	// =========================
+	private void showAddedMemos(
+			ArrayList<Memo> addedMemos) {
+
 		System.out.println();
 		System.out.println(
 				addedMemos.size()
@@ -509,8 +509,6 @@ public class MemoProcess {
 			System.out.println(
 					"・" + memo.getText());
 		}
-
-		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 	}
 
 	// =========================
@@ -775,30 +773,7 @@ public class MemoProcess {
 
 			ConsoleUtil.showDivider();
 
-			System.out.println("[白紙に書き出す]");
-			System.out.println();
-			System.out.println();
-			System.out.println();
-
-			System.out.println(
-					"考えていることを、いったんここに置いていきましょう。");
-			System.out.println(
-					"まとまっていなくても大丈夫です。");
-
-			System.out.println();
-			System.out.println();
-			System.out.println(
-					"「。」「！」「？」または改行で");
-			System.out.println(
-					"1件ずつのメモに分かれます。");
-
-			System.out.println();
-			System.out.println();
-			System.out.println(
-					"入力を終えるときは、Enterを2回押してください。");
-
-			System.out.println();
-			System.out.println();
+			showBlankPaperGuide();
 
 			ArrayList<String> texts = readMemoTexts();
 
@@ -900,6 +875,37 @@ public class MemoProcess {
 			}
 		}
 
+	}
+
+	// =========================
+	// 白紙画面の案内
+	// =========================
+	private void showBlankPaperGuide() {
+
+		System.out.println("[白紙に書き出す]");
+		System.out.println();
+		System.out.println();
+		System.out.println();
+
+		System.out.println(
+				"考えていることを、いったんここに置いていきましょう。");
+		System.out.println(
+				"まとまっていなくても大丈夫です。");
+
+		System.out.println();
+		System.out.println();
+		System.out.println(
+				"「。」「！」「？」または改行で");
+		System.out.println(
+				"1件ずつのメモに分かれます。");
+
+		System.out.println();
+		System.out.println();
+		System.out.println(
+				"入力を終えるときは、Enterを2回押してください。");
+
+		System.out.println();
+		System.out.println();
 	}
 
 	// =========================
