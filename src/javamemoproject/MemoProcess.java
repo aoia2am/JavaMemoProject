@@ -35,34 +35,49 @@ public class MemoProcess {
 	}
 
 	// =========================
-	// メモを編集する
+	// メモ一覧を表示して
+	// 番号でメモを1件選ぶ
+	// 対象なし・0入力ならnull
 	// =========================
-	public void updateMemo(Project project) {
+	private Memo showAndSelectMemo(
+			Project project,
+			String emptyMessage,
+			String promptMessage,
+			boolean showHierarchyNumber) {
 
 		ArrayList<Memo> projectMemos = getProjectMemosInTreeOrder(
 				project.getProjectId());
+
 		ConsoleUtil.showDivider();
 
 		if (projectMemos.isEmpty()) {
-			System.out.println("編集できるメモはありません。");
+
+			System.out.println(emptyMessage);
+
 			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-			return;
+			return null;
 		}
 
-		System.out.println("編集するメモを選んでください。");
+		System.out.println(promptMessage);
+
 		System.out.println();
 
 		for (int i = 0; i < projectMemos.size(); i++) {
 
 			Memo memo = projectMemos.get(i);
 
-			String displayNumber = getMemoDisplayNumber(memo);
+			// 階層番号を出す画面だけ「1-(1)」を付ける
+			String hierarchyNumber = "";
+
+			if (showHierarchyNumber) {
+
+				hierarchyNumber = getMemoDisplayNumber(memo) + " ";
+			}
 
 			System.out.println(
 					(i + 1)
 							+ ". "
-							+ displayNumber
-							+ " "
+							+ hierarchyNumber
 							+ memo.getText());
 		}
 
@@ -86,10 +101,26 @@ public class MemoProcess {
 		}
 
 		if (number == 0) {
-			return;
+			return null;
 		}
 
-		Memo memo = projectMemos.get(number - 1);
+		return projectMemos.get(number - 1);
+	}
+
+	// =========================
+	// メモを編集する
+	// =========================
+	public void updateMemo(Project project) {
+
+		Memo memo = showAndSelectMemo(
+				project,
+				"編集できるメモはありません。",
+				"編集するメモを選んでください。",
+				false);
+
+		if (memo == null) {
+			return;
+		}
 
 		String oldText = memo.getText();
 
@@ -135,69 +166,25 @@ public class MemoProcess {
 	// =========================
 	public void deleteMemo(Project project) {
 
-		ArrayList<Memo> projectMemos = getProjectMemosInTreeOrder(
-				project.getProjectId());
+		Memo targetMemo = showAndSelectMemo(
+				project,
+				"削除できるメモはありません。",
+				"削除するメモを選んでください。",
+				false);
 
-		ConsoleUtil.showDivider();
-
-		if (projectMemos.isEmpty()) {
-
-			System.out.println(
-					"削除できるメモはありません。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+		if (targetMemo == null) {
 			return;
 		}
-
-		System.out.println(
-				"削除するメモを選んでください。");
-
-		System.out.println();
-
-		for (int i = 0; i < projectMemos.size(); i++) {
-
-			Memo memo = projectMemos.get(i);
-
-			String displayNumber = getMemoDisplayNumber(memo);
-
-			System.out.println(
-					(i + 1)
-							+ ". "
-							+ displayNumber
-							+ " "
-							+ memo.getText());
-		}
-
-		System.out.println();
-		System.out.println("0. 戻る");
-		System.out.println();
-
-		int number;
-
-		// 不正入力ならこの場で再入力
-		while (true) {
-
-			number = ConsoleUtil.readNumber(
-					scanner,
-					"番号を入力 > ",
-					projectMemos.size());
-
-			if (number != -1) {
-				break;
-			}
-		}
-
-		if (number == 0) {
-			return;
-		}
-
-		Memo targetMemo = projectMemos.get(number - 1);
 
 		int projectId = targetMemo.getProjectId();
 
 		int parentMemoId = targetMemo.getParentMemoId();
 
 		ArrayList<Memo> descendants = getDescendants(targetMemo);
+
+		// 一覧に表示されていた番号
+		int number = getProjectMemosInTreeOrder(
+				projectId).indexOf(targetMemo) + 1;
 
 		System.out.println(
 				number + ".「"
@@ -460,63 +447,15 @@ public class MemoProcess {
 	// =========================
 	public void createChildMemo(Project project) {
 
-		ArrayList<Memo> projectMemos = getProjectMemosInTreeOrder(
-				project.getProjectId());
+		Memo parentMemo = showAndSelectMemo(
+				project,
+				"細かくできるメモはありません。",
+				"細かくするメモを選んでください。",
+				true);
 
-		ConsoleUtil.showDivider();
-
-		if (projectMemos.isEmpty()) {
-
-			System.out.println(
-					"細かくできるメモはありません。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+		if (parentMemo == null) {
 			return;
 		}
-
-		System.out.println(
-				"細かくするメモを選んでください。");
-
-		System.out.println();
-
-		for (int i = 0; i < projectMemos.size(); i++) {
-
-			Memo memo = projectMemos.get(i);
-
-			String displayNumber = getMemoDisplayNumber(memo);
-
-			System.out.println(
-					(i + 1)
-							+ ". "
-							+ displayNumber
-							+ " "
-							+ memo.getText());
-		}
-
-		System.out.println();
-		System.out.println("0. 戻る");
-		System.out.println();
-
-		int number;
-
-		// 不正入力ならこの場で再入力
-		while (true) {
-
-			number = ConsoleUtil.readNumber(
-					scanner,
-					"番号を入力 > ",
-					projectMemos.size());
-
-			if (number != -1) {
-				break;
-			}
-		}
-
-		if (number == 0) {
-			return;
-		}
-
-		Memo parentMemo = projectMemos.get(number - 1);
 
 		ConsoleUtil.showDivider();
 
@@ -1638,63 +1577,15 @@ public class MemoProcess {
 	// =========================
 	public void reorderMemo(Project project) {
 
-		ArrayList<Memo> projectMemos = getProjectMemosInTreeOrder(
-				project.getProjectId());
+		Memo targetMemo = showAndSelectMemo(
+				project,
+				"並び替えできるメモはありません。",
+				"並び替えるメモを選んでください。",
+				true);
 
-		ConsoleUtil.showDivider();
-
-		if (projectMemos.isEmpty()) {
-
-			System.out.println(
-					"並び替えできるメモはありません。");
-
-			ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+		if (targetMemo == null) {
 			return;
 		}
-
-		System.out.println(
-				"並び替えるメモを選んでください。");
-
-		System.out.println();
-
-		for (int i = 0; i < projectMemos.size(); i++) {
-
-			Memo memo = projectMemos.get(i);
-
-			String displayNumber = getMemoDisplayNumber(memo);
-
-			System.out.println(
-					(i + 1)
-							+ ". "
-							+ displayNumber
-							+ " "
-							+ memo.getText());
-		}
-
-		System.out.println();
-		System.out.println("0. 戻る");
-		System.out.println();
-
-		int number;
-
-		// 不正入力ならこの場で再入力
-		while (true) {
-
-			number = ConsoleUtil.readNumber(
-					scanner,
-					"番号を入力 > ",
-					projectMemos.size());
-
-			if (number != -1) {
-				break;
-			}
-		}
-
-		if (number == 0) {
-			return;
-		}
-
-		Memo targetMemo = projectMemos.get(number - 1);
 
 		// 同じ親を持つメモだけ取得
 		ArrayList<Memo> siblings = getChildMemos(
