@@ -26,6 +26,18 @@ public class ProjectProcess {
 			ConsoleUtil.showLocation(
 					"HOME > プロジェクト管理");
 
+			ArrayList<Project> activeProjects = getActiveProjects();
+
+			if (activeProjects.isEmpty()) {
+				System.out.println("プロジェクトはありません。");
+			} else {
+				for (int i = 0; i < activeProjects.size(); i++) {
+					System.out.println(
+							(i + 1) + ". " + activeProjects.get(i).getName());
+				}
+			}
+
+			System.out.println();
 			System.out.println("1. ＋新しいプロジェクトを作る");
 			System.out.println("2. プロジェクト名を変更する");
 			System.out.println("3. プロジェクトを削除する");
@@ -90,7 +102,7 @@ public class ProjectProcess {
 		}
 
 		int projectId = getNextProjectId();
-		int order = getNextOrder();
+		int order = getNextProjectOrder();
 
 		Project project = new Project(
 				projectId,
@@ -341,8 +353,8 @@ public class ProjectProcess {
 
 		activeProjects.sort(
 				(a, b) -> Integer.compare(
-						a.getOrder(),
-						b.getOrder()));
+						a.getProjectOrder(),
+						b.getProjectOrder()));
 
 		return activeProjects;
 	}
@@ -385,14 +397,14 @@ public class ProjectProcess {
 	// =========================
 	// 次の実行順
 	// =========================
-	private int getNextOrder() {
+	private int getNextProjectOrder() {
 
 		int maxOrder = 0;
 
 		for (Project project : projects) {
 
-			if (project.getOrder() > maxOrder) {
-				maxOrder = project.getOrder();
+			if (project.getProjectOrder() > maxOrder) {
+				maxOrder = project.getProjectOrder();
 			}
 		}
 
@@ -534,7 +546,7 @@ public class ProjectProcess {
 
 			activeProjects
 					.get(i)
-					.setOrder(i + 1);
+					.setProjectOrder(i + 1);
 		}
 
 		FileManager.saveProjects(projects);

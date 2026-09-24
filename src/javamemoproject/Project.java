@@ -4,13 +4,13 @@ public class Project {
 	private int projectId;
 	private String name;
 	private boolean completed;
-	private int order;
+	private int projectOrder;
 
-	public Project(int projectId, String name, int order) {
+	public Project(int projectId, String name, int projectOrder) {
 		this.projectId = projectId;
 		this.name = name;
 		this.completed = false;
-		this.order = order;
+		this.projectOrder = projectOrder;
 	}
 
 	public int getProjectId() {
@@ -33,11 +33,11 @@ public class Project {
 		this.completed = completed;
 	}
 
-	public int getOrder() {
-		return order;
+	public int getProjectOrder() {
+		return projectOrder;
 	}
 
-	public void setOrder(int order) {
-		this.order = order;
+	public void setProjectOrder(int projectOrder) {
+		this.projectOrder = projectOrder;
 	}
 }

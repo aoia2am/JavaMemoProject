@@ -18,7 +18,7 @@ public class MemoProcess {
 	}
 
 	// プロジェクトを選んでメモを見る
-	public void openProjectMemos() {
+	public void openProjectMemoMenu() {
 
 		// メモ一覧を閉じたらプロジェクト一覧へ戻る
 		while (true) {
@@ -30,7 +30,7 @@ public class MemoProcess {
 				return;
 			}
 
-			openProjectMemos(project);
+			showProjectMemoMenu(project);
 		}
 	}
 
@@ -257,7 +257,7 @@ public class MemoProcess {
 		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
 	}
 
-	public void openProjectMemos(Project project) {
+	public void showProjectMemoMenu(Project project) {
 
 		boolean running = true;
 
@@ -305,7 +305,7 @@ public class MemoProcess {
 			switch (input) {
 
 			case "1":
-				boolean projectCompleted = completeCurrentTask(project);
+				boolean projectCompleted = completeCurrentMemo(project);
 
 				if (projectCompleted) {
 					running = false;
@@ -322,7 +322,7 @@ public class MemoProcess {
 				break;
 
 			case "4":
-				manageMemoEdit(project);
+				showMemoEditMenu(project);
 				break;
 
 			case "5":
@@ -595,8 +595,8 @@ public class MemoProcess {
 		// order順に並べる
 		children.sort(
 				(a, b) -> Integer.compare(
-						a.getOrder(),
-						b.getOrder()));
+						a.getSiblingOrder(),
+						b.getSiblingOrder()));
 
 		return children;
 	}
@@ -652,7 +652,7 @@ public class MemoProcess {
 			System.out.println(
 					indent
 							+ currentMark
-							+ memo.getOrder()
+							+ memo.getSiblingOrder()
 							+ ". "
 							+ memo.getText()
 							+ completedText);
@@ -747,7 +747,7 @@ public class MemoProcess {
 	}
 
 	// 同じ階層の最後のorderを取得
-	private int getNextOrder(
+	private int getNextMemoOrder(
 			int projectId,
 			int parentMemoId) {
 
@@ -757,9 +757,9 @@ public class MemoProcess {
 
 			if (memo.getProjectId() == projectId
 					&& memo.getParentMemoId() == parentMemoId
-					&& memo.getOrder() > maxOrder) {
+					&& memo.getSiblingOrder() > maxOrder) {
 
-				maxOrder = memo.getOrder();
+				maxOrder = memo.getSiblingOrder();
 			}
 		}
 
@@ -805,7 +805,7 @@ public class MemoProcess {
 
 			int memoId = getNextMemoId();
 
-			int order = getNextOrder(
+			int order = getNextMemoOrder(
 					projectId,
 					parentMemoId);
 
@@ -941,7 +941,7 @@ public class MemoProcess {
 
 				case "2":
 					ConsoleUtil.showDivider();
-					organizeUnorganizedMemos();
+					assignUnorganizedMemos();
 					running = false;
 					inMenu = false;
 					break;
@@ -966,7 +966,7 @@ public class MemoProcess {
 	// =========================
 	// 未整理メモを整理する
 	// =========================
-	public void organizeUnorganizedMemos() {
+	public void assignUnorganizedMemos() {
 
 		ArrayList<Memo> unorganizedMemos = getUnorganizedMemos();
 
@@ -1047,7 +1047,7 @@ public class MemoProcess {
 
 					FileManager.saveMemos(memos);
 
-					boolean continueSorting = showAfterAssignMenu(
+					boolean continueSorting = showNextActionMenu(
 							memo,
 							project);
 
@@ -1074,7 +1074,7 @@ public class MemoProcess {
 
 						FileManager.saveMemos(memos);
 
-						boolean continueSorting = showAfterAssignMenu(
+						boolean continueSorting = showNextActionMenu(
 								memo,
 								newProject);
 
@@ -1168,7 +1168,7 @@ public class MemoProcess {
 	// =========================
 	// 「今やること」を完了する
 	// =========================
-	public boolean completeCurrentTask(Project project) {
+	public boolean completeCurrentMemo(Project project) {
 
 		Memo currentTask = findCurrentTask(project.getProjectId());
 
@@ -1456,7 +1456,7 @@ public class MemoProcess {
 	// =========================
 	// プロジェクト保存後の画面
 	// =========================
-	private boolean showAfterAssignMenu(
+	private boolean showNextActionMenu(
 			Memo memo,
 			Project project) {
 
@@ -1500,7 +1500,7 @@ public class MemoProcess {
 				return true;
 
 			case "2":
-				openProjectMemos(project);
+				showProjectMemoMenu(project);
 
 				// プロジェクトを見終わったらHOMEへ
 				return false;
@@ -1532,7 +1532,7 @@ public class MemoProcess {
 
 		while (currentMemo != null) {
 
-			numbers.add(0, currentMemo.getOrder());
+			numbers.add(0, currentMemo.getSiblingOrder());
 
 			if (currentMemo.getParentMemoId() == 0) {
 				break;
@@ -1576,7 +1576,7 @@ public class MemoProcess {
 
 		for (int i = 0; i < siblings.size(); i++) {
 
-			siblings.get(i).setOrder(i + 1);
+			siblings.get(i).setSiblingOrder(i + 1);
 		}
 
 		FileManager.saveMemos(memos);
@@ -1585,7 +1585,7 @@ public class MemoProcess {
 	// =========================
 	// メモ編集メニュー
 	// =========================
-	public void manageMemoEdit(Project project) {
+	public void showMemoEditMenu(Project project) {
 
 		boolean running = true;
 
@@ -1755,7 +1755,7 @@ public class MemoProcess {
 		// orderを1から振り直す
 		for (int i = 0; i < siblings.size(); i++) {
 
-			siblings.get(i).setOrder(i + 1);
+			siblings.get(i).setSiblingOrder(i + 1);
 		}
 
 		FileManager.saveMemos(memos);

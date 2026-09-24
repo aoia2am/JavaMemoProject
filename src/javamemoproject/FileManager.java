@@ -31,7 +31,7 @@ public class FileManager {
 				Project p = projects.get(i);
 				// タブ区切り
 				pw.println(p.getProjectId() + "\t" + p.getName() + "\t"
-						+ p.isCompleted() + "\t" + p.getOrder());
+						+ p.isCompleted() + "\t" + p.getProjectOrder());
 			}
 			pw.close();
 		} catch (IOException e) {
@@ -58,9 +58,9 @@ public class FileManager {
 				int projectId = Integer.parseInt(data[0]);
 				String name = data[1];
 				boolean completed = Boolean.parseBoolean(data[2]);
-				int order = Integer.parseInt(data[3]);
+				int projectOrder = Integer.parseInt(data[3]);
 
-				Project project = new Project(projectId, name, order);
+				Project project = new Project(projectId, name, projectOrder);
 				project.setCompleted(completed);
 				projects.add(project);
 			}
@@ -82,7 +82,7 @@ public class FileManager {
 				Memo m = memos.get(i);
 				pw.println(m.getMemoId() + "\t" + m.getText() + "\t"
 						+ m.getProjectId() + "\t" + m.getParentMemoId() + "\t"
-						+ m.isCompleted() + "\t" + m.getOrder());
+						+ m.isCompleted() + "\t" + m.getSiblingOrder());
 			}
 			pw.close();
 		} catch (IOException e) {
@@ -111,9 +111,9 @@ public class FileManager {
 				int projectId = Integer.parseInt(data[2]);
 				int parentMemoId = Integer.parseInt(data[3]);
 				boolean completed = Boolean.parseBoolean(data[4]);
-				int order = Integer.parseInt(data[5]);
+				int siblingOrder = Integer.parseInt(data[5]);
 
-				Memo memo = new Memo(memoId, text, projectId, parentMemoId, order);
+				Memo memo = new Memo(memoId, text, projectId, parentMemoId, siblingOrder);
 				memo.setCompleted(completed);
 				memos.add(memo);
 			}
