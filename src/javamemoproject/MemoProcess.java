@@ -1137,6 +1137,55 @@ public class MemoProcess {
 			return false;
 		}
 
+		// 完了するか確認する
+		if (!confirmCompleteMemo(currentTask)) {
+			return false;
+		}
+
+		// 今やることを完了
+		currentTask.setCompleted(true);
+
+		System.out.println();
+		System.out.println(
+				"●「"
+						+ currentTask.getText()
+						+ "」を完了しました。");
+
+		// 親メモへ完了を連鎖させる
+		ArrayList<Memo> completedParents = completeParentMemos(
+				currentTask);
+
+		for (Memo parentMemo : completedParents) {
+
+			System.out.println();
+			System.out.println(
+					"●「" + parentMemo.getText()
+							+ "」が完了しました。");
+		}
+
+		// メモの状態を保存
+		FileManager.saveMemos(memos);
+
+		// プロジェクト全体が終わったか確認
+		if (isProjectCompleted(
+				project.getProjectId())) {
+
+			completeProjectAndShow(project);
+
+			return true;
+		}
+
+		showNextTask(project);
+
+		return false;
+	}
+
+	// =========================
+	// 完了するか確認する
+	// 完了する：true / 中止：false
+	// =========================
+	private boolean confirmCompleteMemo(Memo currentTask) {
+
 		System.out.println(
 				"「" + currentTask.getText()
 						+ "」を完了します。");
@@ -1165,17 +1214,19 @@ public class MemoProcess {
 			return false;
 		}
 
-		// 今やることを完了
-		currentTask.setCompleted(true);
+		return true;
+	}
 
-		System.out.println();
-		System.out.println(
-				"●「"
-						+ currentTask.getText()
-						+ "」を完了しました。");
+	// =========================
+	// 子が全部完了した親メモを
+	// 上へたどって完了にする
+	// 完了させた親を順番に返す
+	// =========================
+	private ArrayList<Memo> completeParentMemos(Memo memo) {
 
-		// 親メモを確認
-		int parentMemoId = currentTask.getParentMemoId();
+		ArrayList<Memo> completedParents = new ArrayList<>();
+
+		int parentMemoId = memo.getParentMemoId();
 
 		while (parentMemoId != 0) {
 
@@ -1185,55 +1236,54 @@ public class MemoProcess {
 				break;
 			}
 
-			if (areAllChildrenCompleted(
+			// 子が残っていたらここで止める
+			if (!areAllChildrenCompleted(
 					parentMemo.getMemoId())) {
-
-				parentMemo.setCompleted(true);
-
-				System.out.println();
-				System.out.println(
-						"●「" + parentMemo.getText()
-								+ "」が完了しました。");
-
-				parentMemoId = parentMemo.getParentMemoId();
-
-			} else {
-
 				break;
 			}
+
+			parentMemo.setCompleted(true);
+
+			completedParents.add(parentMemo);
+
+			parentMemoId = parentMemo.getParentMemoId();
 		}
 
-		// メモの状態を保存
-		FileManager.saveMemos(memos);
+		return completedParents;
+	}
 
-		// プロジェクト全体が終わったか確認
-		if (isProjectCompleted(
-				project.getProjectId())) {
+	// =========================
+	// プロジェクトを完了にして
+	// 結果を表示する
+	// =========================
+	private void completeProjectAndShow(Project project) {
 
-			projectProcess.completeProject(
-					project.getProjectId());
+		projectProcess.completeProject(
+				project.getProjectId());
 
-			System.out.println();
-			System.out.println(
-					"●プロジェクト「"
-							+ project.getName()
-							+ "」が完了しました。");
+		System.out.println();
+		System.out.println(
+				"●プロジェクト「"
+						+ project.getName()
+						+ "」が完了しました。");
 
-			System.out.println(
-					"●アーカイブに移動しました。");
+		System.out.println(
+				"●アーカイブに移動しました。");
 
-			System.out.println();
+		System.out.println();
 
-			System.out.println(
-					"次にやること："
-							+ getCurrentTaskText());
+		System.out.println(
+				"次にやること："
+						+ getCurrentTaskText());
 
-			ConsoleUtil.waitForEnter(scanner, "EnterでHOMEに戻る > ");
+		ConsoleUtil.waitForEnter(scanner, "EnterでHOMEに戻る > ");
+	}
 
-			return true;
-		}
+	// =========================
+	// 次にやることを表示する
+	// =========================
+	private void showNextTask(Project project) {
 
-		// 次のタスクを取得
 		Memo nextTask = findCurrentTask(
 				project.getProjectId());
 
@@ -1252,8 +1302,6 @@ public class MemoProcess {
 		}
 
 		ConsoleUtil.waitForEnter(scanner, "Enterでプロジェクト画面に戻る > ");
-
-		return false;
 	}
 
 	// =========================
