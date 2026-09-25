@@ -931,70 +931,68 @@ public class MemoProcess {
 
 			Memo memo = unorganizedMemos.get(index);
 
-			ConsoleUtil.showDivider();
-
-			System.out.println(
-					"「" + memo.getText() + "」 "
-							+ "(" + (index + 1)
-							+ "/" + unorganizedMemos.size() + ")");
-
-			System.out.println();
-			System.out.println("保存先を選んでください。");
-			System.out.println();
-
 			ArrayList<Project> projects = projectProcess.getActiveProjects();
-
-			for (int i = 0; i < projects.size(); i++) {
-
-				System.out.println(
-						(i + 1) + ". "
-								+ projects.get(i).getName());
-			}
 
 			int createNumber = projects.size() + 1;
 			int skipNumber = projects.size() + 2;
 
-			System.out.println();
+			ConsoleUtil.showDivider();
 
-			System.out.println(
-					createNumber + ". ＋新しいプロジェクト");
+			showUnorganizedMemoScreen(
+					memo,
+					index,
+					unorganizedMemos.size(),
+					projects,
+					createNumber,
+					skipNumber);
 
-			System.out.println(
-					skipNumber + ". スキップ");
+			int number = ConsoleUtil.readNumber(
+					scanner,
+					"番号を入力 > ",
+					skipNumber);
 
-			System.out.println(
-					"0. HOMEへ戻る");
-
-			System.out.println();
-
-			System.out.print("番号を入力 > ");
-			String input = scanner.nextLine().trim();
+			// 不正入力なら同じメモをもう一度表示
+			if (number == -1) {
+				continue;
+			}
 
 			// HOME
-			if (input.equals("0")) {
+			if (number == 0) {
 				return;
 			}
 
-			try {
+			// =========================
+			// 既存プロジェクトへ保存
+			// =========================
+			if (number <= projects.size()) {
 
-				int number = Integer.parseInt(input);
+				Project project = projects.get(number - 1);
 
-				// =========================
-				// 既存プロジェクトへ保存
-				// =========================
-				if (number >= 1
-						&& number <= projects.size()) {
+				boolean continueSorting = assignMemoToProject(
+						memo,
+						project);
 
-					Project project = projects.get(number - 1);
+				if (!continueSorting) {
+					return;
+				}
 
-					memo.setProjectId(
-							project.getProjectId());
+				index++;
+			}
 
-					FileManager.saveMemos(memos);
+			// =========================
+			// 新しいプロジェクト
+			// =========================
+			else if (number == createNumber) {
 
-					boolean continueSorting = showNextActionMenu(
+				ConsoleUtil.showDivider();
+
+				Project newProject = projectProcess.createProject();
+
+				if (newProject != null) {
+
+					boolean continueSorting = assignMemoToProject(
 							memo,
-							project);
+							newProject);
 
 					if (!continueSorting) {
 						return;
@@ -1002,62 +1000,14 @@ public class MemoProcess {
 
 					index++;
 				}
+			}
 
-				// =========================
-				// 新しいプロジェクト
-				// =========================
-				else if (number == createNumber) {
+			// =========================
+			// スキップ
+			// =========================
+			else if (number == skipNumber) {
 
-					ConsoleUtil.showDivider();
-
-					Project newProject = projectProcess.createProject();
-
-					if (newProject != null) {
-
-						memo.setProjectId(
-								newProject.getProjectId());
-
-						FileManager.saveMemos(memos);
-
-						boolean continueSorting = showNextActionMenu(
-								memo,
-								newProject);
-
-						if (!continueSorting) {
-							return;
-						}
-
-						index++;
-					}
-				}
-
-				// =========================
-				// スキップ
-				// =========================
-				else if (number == skipNumber) {
-
-					index++;
-				}
-
-				// =========================
-				// 間違った番号
-				// =========================
-				else {
-
-					System.out.println();
-					System.out.println(
-							"表示されている番号を入力してください。");
-
-					ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
-				}
-
-			} catch (NumberFormatException e) {
-
-				System.out.println();
-				System.out.println(
-						"番号を入力してください。");
-
-				ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+				index++;
 			}
 		}
 
@@ -1067,6 +1017,65 @@ public class MemoProcess {
 				"未整理メモの確認が終わりました。");
 
 		ConsoleUtil.waitForEnter(scanner, "Enterで前の画面に戻る > ");
+	}
+
+	// =========================
+	// 未整理メモの振り分け画面
+	// =========================
+	private void showUnorganizedMemoScreen(
+			Memo memo,
+			int index,
+			int total,
+			ArrayList<Project> projects,
+			int createNumber,
+			int skipNumber) {
+
+		System.out.println(
+				"「" + memo.getText() + "」 "
+						+ "(" + (index + 1)
+						+ "/" + total + ")");
+
+		System.out.println();
+		System.out.println("保存先を選んでください。");
+		System.out.println();
+
+		for (int i = 0; i < projects.size(); i++) {
+
+			System.out.println(
+					(i + 1) + ". "
+							+ projects.get(i).getName());
+		}
+
+		System.out.println();
+
+		System.out.println(
+				createNumber + ". ＋新しいプロジェクト");
+
+		System.out.println(
+				skipNumber + ". スキップ");
+
+		System.out.println(
+				"0. HOMEへ戻る");
+
+		System.out.println();
+	}
+
+	// =========================
+	// メモをプロジェクトへ保存し
+	// 次の操作を聞く
+	// =========================
+	private boolean assignMemoToProject(
+			Memo memo,
+			Project project) {
+
+		memo.setProjectId(
+				project.getProjectId());
+
+		FileManager.saveMemos(memos);
+
+		return showNextActionMenu(
+				memo,
+				project);
 	}
 
 	// =========================
@@ -1447,7 +1456,10 @@ public class MemoProcess {
 			case "2":
 				showProjectMemoMenu(project);
 
-				// プロジェクトを見終わったらHOMEへ
+				// メモ画面を閉じたらプロジェクト一覧へ
+				openProjectMemoMenu();
+
+				// プロジェクト一覧で0が押されたらHOMEへ
 				return false;
 
 			case "0":
